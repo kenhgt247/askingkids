@@ -1,8 +1,7 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 
-// QUAN TRỌNG: Dùng NEXT_PUBLIC_ cho biến môi trường phía client
-const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+// Ensure we handle the case where the key is missing (e.g. during build time)
+const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'DUMMY_KEY_FOR_BUILD';
 const ai = new GoogleGenAI({ apiKey });
 
 const modelName = 'gemini-2.5-flash';
@@ -10,7 +9,7 @@ const modelName = 'gemini-2.5-flash';
 // --- Speaking Game Service ---
 
 export const generateSpeakingWord = async (): Promise<{ word: string; hint: string }> => {
-  if (!apiKey) return { word: "Apple", hint: "Quả táo (Thiếu API Key)" };
+  if (apiKey === 'DUMMY_KEY_FOR_BUILD') return { word: "Apple", hint: "Quả táo (Chưa có API Key)" };
   try {
     const response = await ai.models.generateContent({
       model: modelName,
@@ -33,12 +32,12 @@ export const generateSpeakingWord = async (): Promise<{ word: string; hint: stri
     return JSON.parse(text);
   } catch (error) {
     console.error("Error generating word:", error);
-    return { word: "Apple", hint: "Quả táo" };
+    return { word: "Cat", hint: "Con mèo" };
   }
 };
 
 export const evaluatePronunciation = async (targetWord: string, spokenText: string): Promise<{ isCorrect: boolean; feedback: string }> => {
-  if (!apiKey) return { isCorrect: true, feedback: "Giỏi lắm! (Chế độ offline)" };
+  if (apiKey === 'DUMMY_KEY_FOR_BUILD') return { isCorrect: true, feedback: "Giỏi lắm (Demo Mode)" };
   try {
     const prompt = `
       Target word: "${targetWord}"
@@ -81,7 +80,7 @@ export const evaluatePronunciation = async (targetWord: string, spokenText: stri
 // --- Blog Service ---
 
 export const generateBlogArticle = async (topic: string): Promise<string> => {
-  if (!apiKey) return "Vui lòng cấu hình API Key để tạo nội dung tự động.";
+  if (apiKey === 'DUMMY_KEY_FOR_BUILD') return "Vui lòng nhập API Key để tạo nội dung.";
   try {
     const response = await ai.models.generateContent({
       model: modelName,
@@ -100,7 +99,7 @@ export const generateBlogArticle = async (topic: string): Promise<string> => {
 // --- Q&A Service ---
 
 export const askAIExpert = async (question: string, category: string): Promise<string> => {
-  if (!apiKey) return "Chức năng hỏi AI đang bảo trì (Thiếu API Key).";
+  if (apiKey === 'DUMMY_KEY_FOR_BUILD') return "Hệ thống AI đang bảo trì.";
   try {
     const prompt = `
       You are a friendly and knowledgeable expert on the Asking Kids platform.
@@ -127,7 +126,7 @@ export const askAIExpert = async (question: string, category: string): Promise<s
 };
 
 export const generateDiscussionQuestion = async (category: string): Promise<{ title: string; content: string; tags: string[] }> => {
-  if (!apiKey) return { title: "Gợi ý câu hỏi", content: "Hãy nhập nội dung bạn muốn hỏi...", tags: ["Thảo luận"] };
+  if (apiKey === 'DUMMY_KEY_FOR_BUILD') return { title: "Câu hỏi mẫu", content: "Nội dung câu hỏi...", tags: ["Demo"] };
   try {
     const prompt = `
       Generate an engaging, open-ended question for a community of Vietnamese parents and students.

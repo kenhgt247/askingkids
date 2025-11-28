@@ -2,14 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
+    // Ignore type errors during build to prevent Vercel build failure
     ignoreBuildErrors: true,
   },
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
+    // Ignore lint errors during build
     ignoreDuringBuilds: true,
   },
   env: {
